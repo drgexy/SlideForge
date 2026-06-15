@@ -1,6 +1,0 @@
-include LICENSE
-include README.md
-include requirements.txt
-include docs/LEGAL_RISK.md
-include scripts/launch_gui.command
-include scripts/create_macos_app.py
