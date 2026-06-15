@@ -51,7 +51,7 @@ For filenames that contain spaces, Chinese characters, or other non-ASCII text, 
 如果文件名包含空格、中文或其他非 ASCII 字符，请用英文双引号包住输入和输出路径。
 
 ```bash
-slideforge-convert "6213966 癌.sdpc" "6213966.ome.tif"
+slideforge-convert "123456.sdpc" "123456.ome.tif"
 ```
 
 Recommended output names:
@@ -68,7 +68,7 @@ Create an `.svs` entry point after conversion:
 转换完成后创建 `.svs` 入口：
 
 ```bash
-ln "654321.ome.tif" "654321.svs"
+ln "123456.ome.tif" "123456.svs"
 ```
 
 If you see an error such as `unrecognized arguments`, the input filename was probably split by the shell. Add quotes around filenames with spaces.
