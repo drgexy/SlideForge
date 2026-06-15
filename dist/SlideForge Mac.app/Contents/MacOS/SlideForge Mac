@@ -1,0 +1,7 @@
+#!/bin/bash
+set -euo pipefail
+cd "/Volumes/Data/科研/病理论文复现/SlideForge_GitHub"
+if ! python3 -c "import slideforge" >/dev/null 2>&1; then
+  python3 -m pip install -e .
+fi
+exec python3 -m slideforge.gui
