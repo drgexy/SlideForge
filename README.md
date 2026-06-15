@@ -68,7 +68,7 @@ Create an `.svs` entry point after conversion:
 转换完成后创建 `.svs` 入口：
 
 ```bash
-ln "6213966.ome.tif" "6213966.svs"
+ln "654321.ome.tif" "654321.svs"
 ```
 
 If you see an error such as `unrecognized arguments`, the input filename was probably split by the shell. Add quotes around filenames with spaces.
