@@ -71,8 +71,8 @@ slideforge-convert "/path/to/input_sdpc_folder" "/path/to/output_wsi_folder" --o
 Output format options:
 
 - `--output-format ome.tif`: write `.ome.tif` only
-- `--output-format svs`: write `.ome.tif` and create an `.svs` entry point
-- `--output-format both`: write `.ome.tif` and `.svs`
+- `--output-format svs`: write `.svs` only
+- `--output-format both`: write `.ome.tif` and create an `.svs` entry point
 
 Batch conversion is sequential by design. It converts one slide at a time to reduce memory pressure.
 
@@ -209,8 +209,8 @@ slideforge-convert "/path/to/input_sdpc_folder" "/path/to/output_wsi_folder" --o
 输出格式选项：
 
 - `--output-format ome.tif`：只生成 `.ome.tif`
-- `--output-format svs`：生成 `.ome.tif`，并创建 `.svs` 入口
-- `--output-format both`：同时生成 `.ome.tif` 和 `.svs`
+- `--output-format svs`：只生成 `.svs`
+- `--output-format both`：生成 `.ome.tif`，并创建 `.svs` 入口
 
 批量转换会按顺序逐个处理文件，不会同时开启多个转换任务，以降低内存压力。
 

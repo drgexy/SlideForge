@@ -249,12 +249,20 @@ def make_svs_entry(out_tif: Path) -> Path:
 
 
 def infer_single_output(sdpc_path: Path, output_path: Path, output_format: str) -> tuple[Path, str]:
+    fmt = output_format
     if output_path.exists() and output_path.is_dir():
-        fmt = "both" if output_format == "auto" else output_format
-        return output_path / f"{sdpc_path.stem}.ome.tif", fmt
+        fmt = "both" if fmt == "auto" else fmt
+        suffix = ".svs" if fmt == "svs" else ".ome.tif"
+        return output_path / f"{sdpc_path.stem}{suffix}", fmt
     if output_path.suffix.lower() == ".svs":
-        return output_path.with_suffix(".ome.tif"), "svs" if output_format == "auto" else output_format
-    return output_path, "ome.tif" if output_format == "auto" else output_format
+        return output_path, "svs" if fmt == "auto" else fmt
+    fmt = "ome.tif" if fmt == "auto" else fmt
+    if fmt == "svs":
+        name = output_path.name.removesuffix(".ome.tif")
+        if name == output_path.name:
+            name = output_path.stem
+        return output_path.with_name(f"{name}.svs"), fmt
+    return output_path, fmt
 
 
 def iter_sdpc_files(input_dir: Path, recursive: bool) -> list[Path]:
@@ -274,9 +282,7 @@ def convert_sdpc_file(
     skip_existing: bool = False,
 ) -> dict[str, Any]:
     if skip_existing and out_tiff.exists():
-        svs_path = out_tiff.with_name(f"{out_tiff.name.removesuffix('.ome.tif')}.svs")
-        if output_format in {"ome.tif", "both"} or (output_format == "svs" and svs_path.exists()):
-            return {"ok": True, "skipped": True, "out_tiff": str(out_tiff), "svs": str(svs_path) if svs_path.exists() else None}
+        return {"ok": True, "skipped": True, "out_tiff": str(out_tiff)}
 
     if compression_name == "jpeg":
         import imagecodecs  # noqa: F401
@@ -317,7 +323,7 @@ def convert_sdpc_file(
             meta["finished_at"] = now()
             meta["output_size_bytes"] = out_tiff.stat().st_size
             svs_path = None
-            if output_format in {"svs", "both"}:
+            if output_format == "both":
                 svs_path = make_svs_entry(out_tiff)
                 meta["svs"] = str(svs_path)
             sidecar.write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -349,8 +355,9 @@ def convert_input_path(
         for index, sdpc_file in enumerate(sdpc_files, start=1):
             rel = sdpc_file.relative_to(input_path)
             out_dir = output_path / rel.parent
-            out_tif = out_dir / f"{sdpc_file.stem}.ome.tif"
             fmt = "both" if output_format == "auto" else output_format
+            suffix = ".svs" if fmt == "svs" else ".ome.tif"
+            out_tif = out_dir / f"{sdpc_file.stem}{suffix}"
             print(f"[{now()}] batch={index}/{len(sdpc_files)} source={sdpc_file}", flush=True)
             try:
                 convert_sdpc_file(

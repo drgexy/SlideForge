@@ -135,7 +135,9 @@ class SlideForgeApp(tk.Tk):
             messagebox.showerror(APP_NAME, "Please select a valid .sdpc slide.")
             return
         out_dir.mkdir(parents=True, exist_ok=True)
-        out_tif = out_dir / f"{sdpc.stem}.ome.tif"
+        output_format = self.output_format_var.get()
+        suffix = ".svs" if output_format == "svs" else ".ome.tif"
+        out_tif = out_dir / f"{sdpc.stem}{suffix}"
         self.log.delete("1.0", "end")
         self.progress_var.set(0)
         self.status_var.set("Starting conversion.")
@@ -147,7 +149,7 @@ class SlideForgeApp(tk.Tk):
             str(sdpc),
             str(out_tif),
             "--output-format",
-            self.output_format_var.get(),
+            output_format,
             "--compression",
             "jpeg",
             "--jpeg-quality",
@@ -256,16 +258,6 @@ class SlideForgeApp(tk.Tk):
                 self.queue.put(("error", f"Conversion stopped or failed with exit code {code}."))
         except Exception as exc:
             self.queue.put(("error", str(exc)))
-
-    def _make_svs_link(self, out_tif: Path) -> None:
-        name = out_tif.name.removesuffix(".ome.tif")
-        svs = out_tif.with_name(f"{name}.svs")
-        if svs.exists() or svs.is_symlink():
-            svs.unlink()
-        try:
-            svs.hardlink_to(out_tif)
-        except OSError:
-            svs.symlink_to(out_tif.name)
 
     def _make_preview(self, out_tif: Path) -> None:
         try:
